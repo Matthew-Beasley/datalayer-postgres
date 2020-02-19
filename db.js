@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const pg = require('pg');
 const client = new pg.Client('postgres:localhost/cal-poly');
 client.connect();
@@ -29,14 +30,27 @@ const sync = async () => {
 
 const createAuthor = async ({ first_name, last_name }) => {
   const sql = `
-  INSERT INTO authors (first_name, lat_name)
+  INSERT INTO authors (first_name, last_name)
   VALUES ($1, $2)`;
   const response = await client.query(sql, [first_name, last_name]);
   return response.rows;
 }
 
 
+const readAuthors = async () => {
+  const sql = 'SELECT * FROM authors';
+  const response = await client.query(sql);
+  return response.rows;
+}
+
+
+const updateAuthor = async (params) => {
+  
+}
+
+
 module.exports = {
   sync,
-  createAuthor
+  createAuthor,
+  readAuthors
 }
