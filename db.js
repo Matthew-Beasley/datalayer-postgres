@@ -3,6 +3,19 @@ const pg = require('pg');
 const client = new pg.Client('postgres:localhost/cal-poly');
 client.connect();
 
+
+const checkForArticles = async (id) => {
+  const sql = 'SELECT * FROM articles WHERE author_id = $1';
+  const data = client.query(sql, [id]);
+  if (data.length === 0) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+
 const sync = async () => {
   const sql = `
   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -59,9 +72,15 @@ const updateAuthor = async ({ first_name, last_name }) => {
 
 
 const deleteAuthor = async ({ author_id }) => {
-  const sql = 'DELETE FROM authors WHERE author_id = $1';
-  const response = await client.query(sql, [author_id]);
-  return response.rows;
+  const hasArticles = await checkForArticles(author_id);
+  if (!hasArticles) {
+    const sql = 'DELETE FROM authors WHERE author_id = $1';
+    const response = await client.query(sql, [author_id]);
+    return response.rows;
+  }
+  else {
+    return 'Delete all article first.'
+  }
 }
 
 
@@ -87,6 +106,13 @@ const readArticle = async ({ id }) => {
 }
 
 
+const readArticlesByAuthor = async ({ author_id }) => {
+  const sql = 'SELECT * FROM articles WHERE author_id = $1';
+  const response = await client.query(sql, [author_id]);
+  return response.rows;
+}
+
+
 const updateArticles = async ({ title, body }) => {
   const sql = 'UPDATE articles SET title = $1, body = $2';
   const response = await client.query(sql, [title, body]);
@@ -106,6 +132,7 @@ module.exports = {
   createAuthor,
   readAuthors,
   readAuthor,
+  readArticlesByAuthor,
   updateAuthor,
   deleteAuthor,
   createArticle,
