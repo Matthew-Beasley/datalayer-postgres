@@ -44,13 +44,65 @@ const readAuthors = async () => {
 }
 
 
-const updateAuthor = async (params) => {
-  
+const updateAuthor = async ({ first_name, last_name }) => {
+  const sql = 'UPDATE authors SET first_name = $1, last_name = $2';
+  const response = await client.query(sql, [first_name, last_name]);
+  return response.rows;
+}
+
+
+const deleteAuthor = async ({ author_id }) => {
+  const sql = 'DELETE FROM authors WHERE author_id = $1';
+  const response = await client.query(sql, [author_id]);
+  return response.rows;
+}
+
+
+const createArticle = async ({ title, body, author_id }) => {
+  const sql = `INSERT INTO articles (title, body, author_id) 
+               VALUES ($1, $2, $3)`;
+  const response = await client.query(sql, [title, body, author_id]);
+  return response.rows;
+}
+
+
+const readArticles = async () => {
+  const sql = 'SELECT * FROM articles';
+  const response = await client.query(sql);
+  return response.rows;
+}
+
+
+const readArticle = async ({ id }) => {
+  const sql = 'SELECT * FROM articles WHERE id = $1';
+  const response = await client.query(sql, [id]);
+  return response.rows;
+}
+
+
+const updateArticles = async ({ title, body }) => {
+  const sql = 'UPDATE articles SET title = $1, body = $2';
+  const response = await client.query(sql, [title, body]);
+  return response.rows;
+}
+
+
+const deleteArticles = async ({ id }) => {
+  const sql = 'DELETE from articles WHERE id = $1';
+  const response = await client.query(sql, [id]);
+  return response.rows;
 }
 
 
 module.exports = {
   sync,
   createAuthor,
-  readAuthors
+  readAuthors,
+  updateAuthor,
+  deleteAuthor,
+  createArticle,
+  readArticles,
+  readArticle,
+  updateArticles,
+  deleteArticles
 }
