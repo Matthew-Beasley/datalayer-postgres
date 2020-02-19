@@ -44,6 +44,13 @@ const readAuthors = async () => {
 }
 
 
+const readAuthor = async ({ author_id }) => {
+  const sql = 'SELECT * FROM authors WHERE author_id = $1';
+  const response = await client.query(sql, [author_id]);
+  return response.rows;
+}
+
+
 const updateAuthor = async ({ first_name, last_name }) => {
   const sql = 'UPDATE authors SET first_name = $1, last_name = $2';
   const response = await client.query(sql, [first_name, last_name]);
@@ -98,6 +105,7 @@ module.exports = {
   sync,
   createAuthor,
   readAuthors,
+  readAuthor,
   updateAuthor,
   deleteAuthor,
   createArticle,

@@ -42,6 +42,17 @@ app.get('/authors', async (req, res, next) => {
 });
 
 
+app.get('/author', async (req, res, next) => {
+  try {
+    const data = await db.readAuthor(req.body);
+    res.status(200).send(data);
+  }
+  catch (err) {
+    next(err);
+  }
+})
+
+
 app.put('/authors', async (req, res, next) => {
   try {
     const data = await db.updateAuthor(req.body);
